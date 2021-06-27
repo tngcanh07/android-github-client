@@ -33,8 +33,17 @@ class MainActivity : AppCompatActivity(), GitUserBrowserNavigator, GitUserDetail
     }
 
     override fun onOpenUserDetail(username: String) {
-        val args = GitUserDetailFragmentArgs(username)
-        navController.navigate(R.id.action_open_detail_fragment, args.toBundle())
+        try {
+            val args = GitUserDetailFragmentArgs(username)
+            navController.navigate(R.id.action_open_detail_fragment, args.toBundle())
+        } catch (e: IllegalArgumentException) {
+            // double requests, nav cannot find action anymore because it already switches to new fragment
+            Toast.makeText(
+                this,
+                getString(R.string.browser_open_detail_error, username, e.localizedMessage),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun openDetailInGithub(htmlUrl: String) {

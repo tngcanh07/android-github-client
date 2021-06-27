@@ -2,7 +2,8 @@
     <string name="app_name">Github App</string>
 
     <string name="browser_search_hint">Input your keyword</string>
-    <string name="borrow_empty_message">Sorry! No results match your search!!!!</string>
+    <string name="browser_empty_message">Sorry! No results match your search!!!!</string>
+    <string name="browser_open_detail_error" formatted="false">"Cannot open \'%s'.\nError: %s"</string>
 
     <!-- detail-->
     <string name="detail_statistic_public_repos_title">Public repos</string>
