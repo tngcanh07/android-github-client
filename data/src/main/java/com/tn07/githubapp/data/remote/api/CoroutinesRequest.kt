@@ -3,6 +3,7 @@ package com.tn07.githubapp.data.remote.api
 import com.tn07.githubapp.domain.exceptions.ApiException
 import com.tn07.githubapp.domain.exceptions.ConnectionException
 import com.tn07.githubapp.domain.exceptions.DomainException
+import com.tn07.githubapp.domain.exceptions.RateLimitException
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -20,7 +21,7 @@ internal suspend fun <T : Any> request(func: suspend () -> Response<T>): T {
         val response = func()
         return if (response.isSuccessful) {
             response.body() ?: throw DomainException("NO_RESPONSE_BODY")
-        } else throw ApiException(response.code())
+        } else throw mapHttpException(httpCode = response.code())
     } catch (e: Exception) {
         throw e.mapToDomainException()
     }
@@ -32,7 +33,15 @@ internal fun Exception.mapToDomainException(): Exception {
         is SocketTimeoutException, is IOException, is UnknownHostException, is NoRouteToHostException, is ConnectException -> {
             ConnectionException(this)
         }
-        is HttpException -> ApiException(httpCode = this.code(), cause = this)
+        is HttpException -> mapHttpException(httpCode = this.code(), cause = this)
         else -> this
+    }
+}
+
+internal fun mapHttpException(httpCode: Int, cause: Throwable? = null): Exception {
+    return if (httpCode == 403) {
+        RateLimitException()
+    } else {
+        ApiException(httpCode = httpCode, cause = cause)
     }
 }

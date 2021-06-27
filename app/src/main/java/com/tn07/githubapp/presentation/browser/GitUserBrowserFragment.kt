@@ -1,22 +1,15 @@
 package com.tn07.githubapp.presentation.browser
 
-import android.content.Context
 import android.os.Bundle
-import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.textfield.TextInputEditText
-import com.tn07.githubapp.R
 import com.tn07.githubapp.databinding.BrowserFragmentBinding
 import com.tn07.githubapp.presentation.browser.uimodel.GitUserUiModel
 import com.tn07.githubapp.presentation.browser.uimodel.PageState
@@ -34,23 +27,17 @@ class GitUserBrowserFragment : Fragment() {
     private val navigator: GitUserBrowserNavigator
         get() = requireActivity() as GitUserBrowserNavigator
 
-    private var _binding: BrowserFragmentBinding? = null
-    private var _adapter: GitUserAdapter? = null
-
     // This property is only valid between onCreateView and
     // onDestroyView.
+    private var _binding: BrowserFragmentBinding? = null
     private val binding get() = requireNotNull(_binding)
-    private val adapter get() = requireNotNull(_adapter)
-
-    private var searchTextWatcher: TextWatcher? = null
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = BrowserFragmentBinding.inflate(inflater, container, false)
-        _adapter = GitUserAdapter(this::onGitUserClicked)
         return binding.root
     }
 
@@ -58,74 +45,68 @@ class GitUserBrowserFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(view.context)
+        binding.borrowStateError.retryButton.setOnClickListener {
+            viewModel.refresh()
+        }
+        binding.searchTextInput.addTextChangedListener {
+            viewModel.setSearchText(it?.toString())
+        }
 
         lifecycleScope.launchWhenCreated {
-            viewModel.gitUserListResult.collectLatest {
-                adapter.submitData(lifecycle, it)
-                println(">>> gitUserListResult $adapter")
+            viewModel.gitUserListResult.collectLatest { pagingData ->
+                GitUserAdapter(::onGitUserClicked).also {
+                    it.submitData(lifecycle, pagingData)
+                    binding.recyclerView.adapter = it
+                }
             }
         }
         viewModel.pageStateLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 PageState.Initializing -> showLoadingPage()
                 PageState.Success -> showSuccessPage()
-                PageState.LoadingNext -> showLoadingIndicator()
-                PageState.Error -> showErrorPage()
+                PageState.Empty -> showEmptyPage()
+                is PageState.Error -> showErrorPage(it)
+                is PageState.LoadingNextError -> showLoadingNextError(it)
             }
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.list_menu, menu)
-        menu.findItem(R.id.action_search)?.let(::initSearchView)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     private fun showLoadingPage() {
+        binding.borrowStateLoading.root.visibility = View.VISIBLE
+        binding.borrowStateError.root.visibility = View.GONE
+        binding.borrowStateEmpty.root.visibility = View.GONE
         binding.recyclerView.visibility = View.GONE
+        binding.recyclerView.adapter = null
     }
 
     private fun showSuccessPage() {
         binding.recyclerView.visibility = View.VISIBLE
+        binding.borrowStateLoading.root.visibility = View.GONE
+        binding.borrowStateError.root.visibility = View.GONE
+        binding.borrowStateEmpty.root.visibility = View.GONE
     }
 
-    private fun showLoadingIndicator() {
-
+    private fun showEmptyPage() {
+        binding.borrowStateEmpty.root.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
+        binding.borrowStateLoading.root.visibility = View.GONE
+        binding.borrowStateError.root.visibility = View.GONE
     }
 
-    private fun showErrorPage() {
-
+    private fun showErrorPage(state: PageState.Error) {
+        binding.recyclerView.visibility = View.GONE
+        binding.borrowStateEmpty.root.visibility = View.GONE
+        binding.borrowStateLoading.root.visibility = View.GONE
+        binding.borrowStateError.let {
+            it.root.visibility = View.VISIBLE
+            it.errorMessage.setText(state.errorMessageStringRes)
+        }
     }
 
-    private fun initSearchView(menuItem: MenuItem) {
-        val searchEditText =
-            menuItem.actionView.findViewById<TextInputEditText>(R.id.search_text_input)
-
-        menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchEditText.postDelayed({
-                    searchEditText.requestFocus()
-                    (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-                        ?.showSoftInput(searchEditText, 0)
-                    searchTextWatcher = searchEditText.addTextChangedListener { editable ->
-                        editable?.toString()?.let {
-                            viewModel.setSearchText(it)
-                        }
-                    }
-                }, 300)
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchEditText.text = null
-                searchEditText.clearFocus()
-                searchTextWatcher?.let(searchEditText::removeTextChangedListener)
-                return true
-            }
-        })
+    private fun showLoadingNextError(state: PageState.LoadingNextError) {
+        Toast.makeText(requireActivity(), state.errorMessageStringRes, Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun onGitUserClicked(gitUser: GitUserUiModel) {
@@ -135,6 +116,5 @@ class GitUserBrowserFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        _adapter = null
     }
 }

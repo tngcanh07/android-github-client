@@ -5,7 +5,7 @@ import com.tn07.githubapp.R
 import com.tn07.githubapp.domain.entities.GitUserDetail
 import com.tn07.githubapp.domain.exceptions.ConnectionException
 import com.tn07.githubapp.domain.exceptions.DomainException
-import com.tn07.githubapp.domain.exceptions.RequestLimitException
+import com.tn07.githubapp.domain.exceptions.RateLimitException
 import com.tn07.githubapp.presentation.detail.uimodel.LoadDetailError
 import com.tn07.githubapp.presentation.detail.uimodel.UserDetailUiModel
 import java.text.DecimalFormat
@@ -38,9 +38,9 @@ class GitUserDetailTransformerImpl @Inject constructor() : GitUserDetailTransfor
 
     override fun transformErrorState(domainException: DomainException): LoadDetailError {
         @StringRes val errorMessageStringRes = when (domainException) {
-            is ConnectionException -> R.string.detail_connection_error_message
-            is RequestLimitException -> R.string.detail_request_limit_error_message
-            else -> R.string.detail_unknown_error_message
+            is ConnectionException -> R.string.request_error_connection_message
+            is RateLimitException -> R.string.request_error_rate_limit_message
+            else -> R.string.request_error_unknown_message
         }
         return LoadDetailError(errorMessageStringRes)
     }

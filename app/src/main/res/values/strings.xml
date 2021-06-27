@@ -1,20 +1,21 @@
 <resources>
     <string name="app_name">Github App</string>
 
-    <string name="list_menu_search">Search by Text</string>
+    <string name="browser_search_hint">Input your keyword</string>
+    <string name="borrow_empty_message">Sorry! No results match your search!!!!</string>
 
     <!-- detail-->
     <string name="detail_statistic_public_repos_title">Public repos</string>
     <string name="detail_statistic_followers_title">Followers</string>
     <string name="detail_statistic_following_title">Following</string>
-
     <string name="detail_user_info_title">Information</string>
-
     <string name="detail_open_in_github">View in github.com</string>
-    <string name="detail_retry_button">Try Again</string>
 
-    <string name="detail_unknown_error_message">Oops… Strange error happens!!!</string>
-    <string name="detail_request_limit_error_message">You have reached maximum allowed requests. Please try again later</string>
-    <string name="detail_connection_error_message">Could not connect to the server. Please check your internet connection and try again!</string>
+    <string name="retry_button">Try Again</string>
+
+    <string name="request_error_unknown_message">Oops… Strange error happens!!!</string>
+    <string name="request_error_rate_limit_message">You have reached maximum allowed requests. Please try again later</string>
+    <string name="request_error_connection_message">Could not connect to the server. Please check your internet connection and try again!</string>
+
 
 </resources>

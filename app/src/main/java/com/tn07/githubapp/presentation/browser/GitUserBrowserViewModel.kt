@@ -9,7 +9,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.tn07.githubapp.domain.SearchUsersUseCase
+import com.tn07.githubapp.domain.entities.GitUser
+import com.tn07.githubapp.domain.exceptions.DomainException
 import com.tn07.githubapp.presentation.browser.paging.GitUserPagingSource
+import com.tn07.githubapp.presentation.browser.paging.PagingSourceCallback
 import com.tn07.githubapp.presentation.browser.paging.SearchConfigModel
 import com.tn07.githubapp.presentation.browser.transformer.GitUserBrowserTransformer
 import com.tn07.githubapp.presentation.browser.uimodel.ListItem
@@ -45,13 +48,29 @@ class GitUserBrowserViewModel @Inject constructor(
         enablePlaceholders = false
     )
 
+    private val pagingSourceCallback = object : PagingSourceCallback {
+        override fun onSuccess(page: Int, items: List<GitUser>) {
+            if (page == START_PAGE_INDEX && items.isEmpty()) {
+                _pageStateLiveData.postValue(PageState.Empty)
+            } else {
+                _pageStateLiveData.postValue(PageState.Success)
+            }
+        }
+
+        override fun onError(page: Int, e: DomainException) {
+            if (page == START_PAGE_INDEX) {
+                _pageStateLiveData.postValue(transformer.transformErrorState(e))
+            } else {
+                _pageStateLiveData.postValue(transformer.transformLoadingNextError(e))
+            }
+        }
+    }
+
     val gitUserListResult: Flow<PagingData<ListItem>> = Pager(pagingConfig) {
         GitUserPagingSource(
             searchFilter,
             searchUsersUseCase,
-            onStartLoading = this::onStartLoading,
-            onSuccess = this::onSuccess,
-            onError = this::onError,
+            callback = pagingSourceCallback,
             startPageIndex = START_PAGE_INDEX
         ).also {
             currentPagingSource = it
@@ -62,27 +81,14 @@ class GitUserBrowserViewModel @Inject constructor(
             it.map(transformer::transformGitUserUiModel)
         }
 
-    private val _pageStateLiveData = MutableLiveData<PageState>(PageState.Initializing)
+    private val _pageStateLiveData = MutableLiveData<PageState>()
     val pageStateLiveData: LiveData<PageState> get() = _pageStateLiveData
 
-
-    private fun onStartLoading(page: Int) {
-        if (page > START_PAGE_INDEX) {
-            _pageStateLiveData.postValue(PageState.LoadingNext)
-        }
-    }
-
-    private fun onSuccess(page: Int) {
-        _pageStateLiveData.postValue(PageState.Success)
-    }
-
-    private fun onError(page: Int) {
-        _pageStateLiveData.postValue(PageState.Error)
-    }
 
     @Synchronized
     fun setSearchText(searchText: String?) {
         if (searchText.orEmpty() != searchFilter.searchText.orEmpty()) {
+            _pageStateLiveData.postValue(PageState.Initializing)
             // cancel previous task
             if (setSearchTextJob?.isActive == true) {
                 setSearchTextJob?.cancel()
@@ -92,6 +98,18 @@ class GitUserBrowserViewModel @Inject constructor(
                 searchFilter = searchFilter.copy(searchText = searchText)
                 currentPagingSource?.invalidate()
             }
+        }
+    }
+
+    fun refresh() {
+        _pageStateLiveData.postValue(PageState.Initializing)
+        // cancel previous task
+        if (setSearchTextJob?.isActive == true) {
+            setSearchTextJob?.cancel()
+        }
+        setSearchTextJob = viewModelScope.launch {
+            delay(100)
+            currentPagingSource?.invalidate()
         }
     }
 

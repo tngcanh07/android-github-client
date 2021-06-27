@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.tn07.githubapp.domain.SearchUsersUseCase
 import com.tn07.githubapp.domain.entities.GitUser
+import com.tn07.githubapp.domain.exceptions.DomainException
 import javax.inject.Inject
 
 /**
@@ -13,9 +14,7 @@ import javax.inject.Inject
 class GitUserPagingSource @Inject constructor(
     private val searchConfig: SearchConfigModel,
     private val searchUsersUseCase: SearchUsersUseCase,
-    private val onStartLoading: (Int) -> Unit,
-    private val onSuccess: (Int) -> Unit,
-    private val onError: (Int) -> Unit,
+    private val callback: PagingSourceCallback,
     private val startPageIndex: Int
 ) : PagingSource<Int, GitUser>() {
 
@@ -27,20 +26,19 @@ class GitUserPagingSource @Inject constructor(
         println(">>> load ${params.key}; $searchConfig")
         val page = params.key ?: startPageIndex
         return try {
-            onStartLoading(page)
             val items = searchUsersUseCase.searchFor(
                 searchConfig = searchConfig,
                 page = page,
                 pageSize = params.loadSize
             ).items
-            onSuccess(page)
+            callback.onSuccess(page, items)
             LoadResult.Page(
                 data = items,
                 prevKey = if (page <= startPageIndex) null else page - 1,
                 nextKey = if (items.size < params.loadSize) null else page + 1
             )
-        } catch (e: Exception) {
-            onError(page)
+        } catch (e: DomainException) {
+            callback.onError(page, e)
             LoadResult.Error(e)
         }
     }
