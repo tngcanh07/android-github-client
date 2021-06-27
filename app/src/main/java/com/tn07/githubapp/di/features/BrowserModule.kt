@@ -7,15 +7,14 @@ import com.tn07.githubapp.presentation.browser.transformer.GitUserBrowserTransfo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.FragmentComponent
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
 
 /**
  * Created by toannguyen
  * Jun 26, 2021 at 11:05
  */
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface BrowserModule {
     @Binds
     fun bindTransformer(impl: GitUserBrowserTransformerImpl): GitUserBrowserTransformer

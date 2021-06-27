@@ -7,14 +7,14 @@ import com.tn07.githubapp.presentation.detail.transformer.GitUserDetailTransform
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
 
 /**
  * Created by toannguyen
  * Jun 27, 2021 at 10:29
  */
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface DetailModule {
     @Binds
     fun bindGetUserDetailUseCase(impl: GetUserDetailUseCaseImpl): GetUserDetailUseCase

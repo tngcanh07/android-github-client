@@ -8,16 +8,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.tn07.githubapp.di.IoDispatcher
 import com.tn07.githubapp.domain.SearchUsersUseCase
 import com.tn07.githubapp.domain.entities.GitUser
 import com.tn07.githubapp.domain.exceptions.DomainException
 import com.tn07.githubapp.presentation.browser.pagingsource.GitUserPagingSource
 import com.tn07.githubapp.presentation.browser.pagingsource.PagingSourceCallback
-import com.tn07.githubapp.presentation.browser.uimodel.SearchConfigModel
 import com.tn07.githubapp.presentation.browser.transformer.GitUserBrowserTransformer
 import com.tn07.githubapp.presentation.browser.uimodel.ListItem
 import com.tn07.githubapp.presentation.browser.uimodel.PageState
+import com.tn07.githubapp.presentation.browser.uimodel.SearchConfigModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class GitUserBrowserViewModel @Inject constructor(
     private val searchUsersUseCase: SearchUsersUseCase,
-    private val transformer: GitUserBrowserTransformer
+    private val transformer: GitUserBrowserTransformer,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private var searchFilter: SearchConfigModel = SearchConfigModel()
 
@@ -41,11 +44,10 @@ class GitUserBrowserViewModel @Inject constructor(
     private var currentPagingSource: GitUserPagingSource? = null
 
     private val pagingConfig: PagingConfig = PagingConfig(
-        pageSize = 50,
-        maxSize = 1000,
-        initialLoadSize = 50,
-        prefetchDistance = 20,
-        enablePlaceholders = false
+        pageSize = PAGE_SIZE,
+        maxSize = MAX_CAPACITY,
+        initialLoadSize = PAGE_SIZE,
+        prefetchDistance = PREFETCH_DISTANCE
     )
 
     private val pagingSourceCallback = object : PagingSourceCallback {
@@ -93,8 +95,8 @@ class GitUserBrowserViewModel @Inject constructor(
             if (setSearchTextJob?.isActive == true) {
                 setSearchTextJob?.cancel()
             }
-            setSearchTextJob = viewModelScope.launch {
-                delay(300)
+            setSearchTextJob = viewModelScope.launch(ioDispatcher) {
+                delay(SET_TEXT_DELAY_DURATION)
                 searchFilter = searchFilter.copy(searchText = searchText)
                 currentPagingSource?.invalidate()
             }
@@ -107,13 +109,19 @@ class GitUserBrowserViewModel @Inject constructor(
         if (setSearchTextJob?.isActive == true) {
             setSearchTextJob?.cancel()
         }
-        setSearchTextJob = viewModelScope.launch {
-            delay(100)
+        setSearchTextJob = viewModelScope.launch(ioDispatcher) {
+            delay(REFRESH_DELAY_DURATION)
             currentPagingSource?.invalidate()
         }
     }
 
     companion object {
         const val START_PAGE_INDEX = 1
+        const val PAGE_SIZE = 100
+        const val PREFETCH_DISTANCE = 10
+        const val MAX_CAPACITY = 1000
+
+        const val SET_TEXT_DELAY_DURATION = 300L
+        const val REFRESH_DELAY_DURATION = 100L
     }
 }

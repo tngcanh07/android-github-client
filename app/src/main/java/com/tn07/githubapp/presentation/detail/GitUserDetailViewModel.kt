@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tn07.githubapp.di.IoDispatcher
 import com.tn07.githubapp.domain.GetUserDetailUseCase
 import com.tn07.githubapp.domain.exceptions.DomainException
 import com.tn07.githubapp.presentation.detail.transformer.GitUserDetailTransformer
 import com.tn07.githubapp.presentation.detail.uimodel.DetailState
 import com.tn07.githubapp.presentation.detail.uimodel.LoadingUserDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class GitUserDetailViewModel @Inject constructor(
     private val getUserDetailUseCase: GetUserDetailUseCase,
-    private val transformer: GitUserDetailTransformer
+    private val transformer: GitUserDetailTransformer,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _userDetailLiveData = MutableLiveData<DetailState>()
@@ -35,7 +38,7 @@ class GitUserDetailViewModel @Inject constructor(
         if (loadingJob?.isActive == true) {
             loadingJob?.cancel()
         }
-        loadingJob = viewModelScope.launch {
+        loadingJob = viewModelScope.launch(ioDispatcher) {
             _userDetailLiveData.postValue(LoadingUserDetail)
             try {
                 getUserDetailUseCase.getUserDetail(username)
