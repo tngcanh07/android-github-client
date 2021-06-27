@@ -7,9 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.tn07.githubapp.R
 import com.tn07.githubapp.presentation.browser.GitUserBrowserNavigator
 import com.tn07.githubapp.presentation.detail.GitUserDetailFragmentArgs
@@ -29,16 +27,9 @@ class MainActivity : AppCompatActivity(), GitUserBrowserNavigator, GitUserDetail
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
-        navController = findNavController(R.id.nav_host_fragment_activity_main)
-
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_browser,
-                R.id.navigation_detail
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmet_container) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
     override fun onOpenUserDetail(username: String) {

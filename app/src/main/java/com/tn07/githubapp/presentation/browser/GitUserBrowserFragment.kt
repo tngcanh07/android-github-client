@@ -31,7 +31,7 @@ class GitUserBrowserFragment : Fragment() {
     // onDestroyView.
     private var _binding: BrowserFragmentBinding? = null
     private val binding get() = requireNotNull(_binding)
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
