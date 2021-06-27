@@ -7,6 +7,7 @@ import com.tn07.githubapp.presentation.browser.transformer.GitUserBrowserTransfo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.components.SingletonComponent
 
 /**

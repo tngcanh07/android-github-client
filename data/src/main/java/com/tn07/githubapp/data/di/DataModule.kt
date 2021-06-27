@@ -1,4 +1,4 @@
-package com.tn07.githubapp.di
+package com.tn07.githubapp.data.di
 
 import com.tn07.githubapp.data.GitUserRepositoryImpl
 import com.tn07.githubapp.data.remote.GitUserRemoteDataSource

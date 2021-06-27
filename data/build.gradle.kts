@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -20,10 +21,13 @@ dependencies {
     implementation(project(Modules.domain))
 
     implementation(Libs.KOTLIN_STDLIB)
+    implementation(Libs.HILT_ANDROID)
+    kapt(Libs.HILT_COMPILER)
     implementation(Libs.RETROFIT)
     implementation(Libs.RETROFIT_GSON_CONVERTER)
+    implementation(Libs.OKHTTP)
+    implementation(Libs.OKHTTP_LOGGING)
     implementation(Libs.GSON)
-    implementation(Libs.JAVAX_INJECT)
 
     testImplementation(Libs.JUNIT)
     testImplementation(Libs.MOCKITO)

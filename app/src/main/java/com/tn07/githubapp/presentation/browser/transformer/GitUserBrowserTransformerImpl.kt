@@ -36,5 +36,4 @@ class GitUserBrowserTransformerImpl @Inject constructor() : GitUserBrowserTransf
             else -> R.string.request_error_unknown_message
         }
     }
-
 }

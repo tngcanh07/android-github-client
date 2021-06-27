@@ -48,6 +48,5 @@ data class GitUserDetailDataModel(
     override val location: String?,
 
     @SerializedName("email")
-    override val email: String?,
-
-    ) : GitUserDetail
+    override val email: String?
+) : GitUserDetail

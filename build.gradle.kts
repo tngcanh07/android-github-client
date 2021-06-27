@@ -4,26 +4,18 @@ buildscript {
         google()
         mavenCentral()
     }
-    ext {
-        kotlin_version = "1.5.10"
-    }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.1"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.37'
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5"
+        classpath(GradlePlugin.ANDROID_BUILD_GRADLE)
+        classpath(GradlePlugin.KOTLIN_GRADLE)
+        classpath(GradlePlugin.HILT)
+        classpath(GradlePlugin.NAVIGATION_SAFE_ARGS)
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
-
 }
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

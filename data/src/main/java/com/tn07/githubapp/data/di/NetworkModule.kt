@@ -1,8 +1,8 @@
-package com.tn07.githubapp.di
+package com.tn07.githubapp.data.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.tn07.githubapp.BuildConfig
+import com.tn07.githubapp.data.BuildConfig
 import com.tn07.githubapp.data.remote.api.ApiConfig
 import com.tn07.githubapp.data.remote.api.GithubApi
 import com.tn07.githubapp.data.remote.api.GsonUTCDateAdapter
@@ -49,20 +49,10 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun providesApiConfig(): ApiConfig {
-        return ApiConfig(
-            baseUrl = "https://api.github.com/",
-            userAgent = BuildConfig.APPLICATION_ID,
-            acceptHeader = "application/vnd.github.v3+json"
-        )
-    }
-
-    @Provides
-    @Singleton
     fun providesOkHttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient {
         val builder = OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             val log = HttpLoggingInterceptor()
             log.level = HttpLoggingInterceptor.Level.BODY
             builder.addInterceptor(log)
