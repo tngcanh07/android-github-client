@@ -29,7 +29,7 @@ class GitUserRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun buildSearchQuery(searchConfig: SearchConfig): String {
+    internal fun buildSearchQuery(searchConfig: SearchConfig): String {
         return listOfNotNull(
             searchConfig.searchText,
             "type:${searchConfig.userType.typeId}"
