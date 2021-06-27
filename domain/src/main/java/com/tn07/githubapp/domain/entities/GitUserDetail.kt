@@ -11,4 +11,9 @@ interface GitUserDetail : GitUser {
     val publicGists: Int
     val followers: Int
     val following: Int
+    val company: String?
+    val blog: String?
+    val location: String?
+    val email: String?
+    val htmlUrl: String
 }

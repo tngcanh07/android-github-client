@@ -23,6 +23,9 @@ data class GitUserDetailDataModel(
     @SerializedName("url")
     override val url: String,
 
+    @SerializedName("html_url")
+    override val htmlUrl: String,
+
     @SerializedName("public_repos")
     override val publicRepos: Int,
 
@@ -33,5 +36,18 @@ data class GitUserDetailDataModel(
     override val followers: Int,
 
     @SerializedName("following")
-    override val following: Int
-) : GitUserDetail
+    override val following: Int,
+
+    @SerializedName("company")
+    override val company: String?,
+
+    @SerializedName("blog")
+    override val blog: String?,
+
+    @SerializedName("location")
+    override val location: String?,
+
+    @SerializedName("email")
+    override val email: String?,
+
+    ) : GitUserDetail

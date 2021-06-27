@@ -11,7 +11,15 @@ sealed interface DetailState
 data class UserDetailUiModel(
     val username: String,
     val name: String?,
-    val avatar: String?
+    val avatar: String?,
+    val publicRepos: String,
+    val followers: String,
+    val following: String,
+    val blog: String?,
+    val company: String?,
+    val email: String?,
+    val location: String?,
+    val htmlUrl: String
 ) : DetailState
 
 object LoadingUserDetail : DetailState

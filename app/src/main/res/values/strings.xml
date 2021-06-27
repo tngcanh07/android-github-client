@@ -4,6 +4,13 @@
     <string name="list_menu_search">Search by Text</string>
 
     <!-- detail-->
+    <string name="detail_statistic_public_repos_title">Public repos</string>
+    <string name="detail_statistic_followers_title">Followers</string>
+    <string name="detail_statistic_following_title">Following</string>
+
+    <string name="detail_user_info_title">Information</string>
+
+    <string name="detail_open_in_github">View in github.com</string>
     <string name="detail_retry_button">Try Again</string>
 
     <string name="detail_unknown_error_message">Oops… Strange error happens!!!</string>

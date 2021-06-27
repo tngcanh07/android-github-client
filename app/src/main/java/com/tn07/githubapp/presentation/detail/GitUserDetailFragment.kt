@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.tn07.githubapp.R
 import com.tn07.githubapp.common.fadeInAnimation
 import com.tn07.githubapp.databinding.DetailFragmentBinding
 import com.tn07.githubapp.presentation.detail.uimodel.DetailState
@@ -22,11 +25,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class GitUserDetailFragment : Fragment() {
     private val viewModel: GitUserDetailViewModel by viewModels()
+    private val navigator: GitUserDetailNavigator
+        get() = requireActivity() as GitUserDetailNavigator
 
     private var _binding: DetailFragmentBinding? = null
     private val binding get() = requireNotNull(_binding)
 
     private val fragmentArgs by navArgs<GitUserDetailFragmentArgs>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,8 +97,46 @@ class GitUserDetailFragment : Fragment() {
         binding.stateError.root.visibility = View.GONE
         binding.stateSuccess.let { binding ->
             binding.root.fadeInAnimation()
+            Glide.with(this)
+                .load(uiModel.avatar)
+                .error(R.drawable.ic_baseline_person_24)
+                .circleCrop()
+                .into(binding.avatar)
+
             binding.name.text = uiModel.name
             binding.userName.text = uiModel.username
+
+            // statistics
+            binding.detailUserStatistic.apply {
+                followingValue.text = uiModel.following
+                followersValue.text = uiModel.followers
+                publicReposValue.text = uiModel.publicRepos
+            }
+            // user info
+            binding.detailUserInfo.apply {
+                var hasData = false
+                hasData = company.setTextOrHide(uiModel.company) || hasData
+                hasData = location.setTextOrHide(uiModel.location) || hasData
+                hasData = email.setTextOrHide(uiModel.email) || hasData
+                hasData = blog.setTextOrHide(uiModel.blog) || hasData
+                root.visibility = if (hasData) View.VISIBLE else View.GONE
+            }
+
+            // open in github.com
+            binding.openInGithub.setOnClickListener {
+                navigator.openDetailInGithub(uiModel.htmlUrl)
+            }
+        }
+    }
+
+    private fun TextView.setTextOrHide(value: String?): Boolean {
+        return if (value.isNullOrEmpty()) {
+            visibility = View.GONE
+            false
+        } else {
+            visibility = View.VISIBLE
+            text = value
+            true
         }
     }
 }
