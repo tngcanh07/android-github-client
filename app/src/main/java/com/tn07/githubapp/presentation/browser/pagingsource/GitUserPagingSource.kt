@@ -1,10 +1,11 @@
-package com.tn07.githubapp.presentation.browser.paging
+package com.tn07.githubapp.presentation.browser.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.tn07.githubapp.domain.SearchUsersUseCase
 import com.tn07.githubapp.domain.entities.GitUser
 import com.tn07.githubapp.domain.exceptions.DomainException
+import com.tn07.githubapp.presentation.browser.uimodel.SearchConfigModel
 import javax.inject.Inject
 
 /**
@@ -23,7 +24,6 @@ class GitUserPagingSource @Inject constructor(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GitUser> {
-        println(">>> load ${params.key}; $searchConfig")
         val page = params.key ?: startPageIndex
         return try {
             val items = searchUsersUseCase.searchFor(

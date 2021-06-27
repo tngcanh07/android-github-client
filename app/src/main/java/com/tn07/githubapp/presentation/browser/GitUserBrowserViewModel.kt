@@ -11,9 +11,9 @@ import androidx.paging.map
 import com.tn07.githubapp.domain.SearchUsersUseCase
 import com.tn07.githubapp.domain.entities.GitUser
 import com.tn07.githubapp.domain.exceptions.DomainException
-import com.tn07.githubapp.presentation.browser.paging.GitUserPagingSource
-import com.tn07.githubapp.presentation.browser.paging.PagingSourceCallback
-import com.tn07.githubapp.presentation.browser.paging.SearchConfigModel
+import com.tn07.githubapp.presentation.browser.pagingsource.GitUserPagingSource
+import com.tn07.githubapp.presentation.browser.pagingsource.PagingSourceCallback
+import com.tn07.githubapp.presentation.browser.uimodel.SearchConfigModel
 import com.tn07.githubapp.presentation.browser.transformer.GitUserBrowserTransformer
 import com.tn07.githubapp.presentation.browser.uimodel.ListItem
 import com.tn07.githubapp.presentation.browser.uimodel.PageState

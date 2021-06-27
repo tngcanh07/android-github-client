@@ -1,4 +1,4 @@
-package com.tn07.githubapp.presentation.browser.paging
+package com.tn07.githubapp.presentation.browser.pagingsource
 
 import com.tn07.githubapp.domain.entities.GitUser
 import com.tn07.githubapp.domain.exceptions.DomainException

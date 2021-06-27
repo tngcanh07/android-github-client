@@ -30,7 +30,6 @@ class GitUserBrowserTransformerImpl @Inject constructor() : GitUserBrowserTransf
     }
 
     private fun getErrorMessage(domainException: DomainException): Int {
-        domainException.printStackTrace()
         return when (domainException) {
             is ConnectionException -> R.string.request_error_connection_message
             is RateLimitException -> R.string.request_error_rate_limit_message

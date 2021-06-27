@@ -18,7 +18,8 @@
                 android:id="@+id/state_error"
                 layout="@layout/detail_state_error"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <include
                 android:id="@+id/state_success"
