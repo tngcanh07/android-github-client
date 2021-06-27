@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_browser">
+
+
+    <fragment
+        android:id="@+id/navigation_browser"
+        android:name="com.tn07.githubapp.presentation.browser.GitUserBrowserFragment"
+        android:label="@null"
+        tools:layout="@layout/browser_fragment">
+        <action
+            android:id="@+id/action_open_detail_fragment"
+            app:destination="@id/navigation_detail"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="com.tn07.githubapp.presentation.detail.GitUserDetailFragment"
+        android:label="@null"
+        tools:layout="@layout/detail_fragment">
+
+        <argument
+            android:name="username"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+</navigation>

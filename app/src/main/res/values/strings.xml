@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Github App</string>
+
+    <string name="list_menu_search">Search by Text</string>
+
+    <!-- detail-->
+    <string name="detail_retry_button">Try Again</string>
+
+    <string name="detail_unknown_error_message">Oops… Strange error happens!!!</string>
+    <string name="detail_request_limit_error_message">You have reached maximum allowed requests. Please try again later</string>
+    <string name="detail_connection_error_message">Could not connect to the server. Please check your internet connection and try again!</string>
+
+</resources>
