@@ -11,6 +11,7 @@ object Libs {
     const val GSON = "com.google.code.gson:gson:${Versions.GSON}"
     const val OKHTTP = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
     const val OKHTTP_LOGGING = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
+    const val MOCK_WEBSERVER = "com.squareup.okhttp3:mockwebserver:${Versions.OKHTTP}"
 
     const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
     const val HILT_COMPILER = "com.google.dagger:hilt-compiler:${Versions.HILT}"

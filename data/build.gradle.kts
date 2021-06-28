@@ -32,4 +32,5 @@ dependencies {
     testImplementation(Libs.JUNIT)
     testImplementation(Libs.MOCKITO)
     testImplementation(Libs.COROUTINES_CORE)
+    testImplementation(Libs.MOCK_WEBSERVER)
 }
